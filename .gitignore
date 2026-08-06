@@ -1,0 +1,88 @@
+### Editors & OS files ###
+*.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+### Environment variables ###
+.env*
+!.env.example
+
+### Miscellaneous ###
+__stuff/
+info.txt
+test.js
+test.php
+backend/public/avatars/*.svg
+
+### SSH ###
+.ssh
+authorized_keys
+
+### Logs ###
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+### Node ###
+node_modules
+dist/
+dist-ssr
+*.parcel-cache
+
+### Docker ###
+docker-compose.override.yml
+
+### Apache ###
+*.ht*
+
+### PHP ###
+vendor/
+composer.lock
+*init-admin.php
+*github-sync.php
+
+### PHPMyAdmin & MySQL data ###
+mysql-data/
+*.sql.bak
+
+### Java ###
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+*.apt_generated
+*.classpath
+*.factorypath
+*.project
+*.settings
+*.springBeans
+*.sts4-cache
+
+### IntelliJ IDEA ###
+*.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+build/
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/

@@ -1,0 +1,34 @@
+name: Telegram notify
+description: Send a Telegram notification with the workflow status and timestamp
+
+inputs:
+  bot_token:
+    description: Token of the Telegram bot
+    required: true
+  chat_id:
+    description: ID of the target Telegram chat/channel
+    required: true
+  status:
+    description: Success or failure
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Send Telegram message
+      shell: bash
+      run: |
+        if [[ "${{ inputs.status }}" == "success" ]]; then
+          emoji="✅"
+        else
+          emoji="❌"
+        fi
+
+        timestamp="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        message="${emoji} workflow: *${{ github.workflow }}* - status: *${{ inputs.status }}* on ${{ github.repository }}%0A${timestamp}"
+
+        curl -s -X POST \
+          "https://api.telegram.org/bot${{ inputs.bot_token }}/sendMessage" \
+          -d "chat_id=${{ inputs.chat_id }}" \
+          -d "text=${message}" \
+          -d "parse_mode=Markdown"
