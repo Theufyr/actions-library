@@ -1,0 +1,54 @@
+name: Detect changes
+description: Détects changes in frontend and/or backend, or if tags are sent in the commit
+
+outputs:
+  backend:
+    value: ${{ steps.verif_changes.outputs.backend }}
+  frontend:
+    value: ${{ steps.verif_changes.outputs.frontend }}
+  reinit:
+    value: ${{ steps.verif_changes.outputs.reinit }}
+
+runs:
+  using: composite
+  steps:
+    - id: verif_changes
+      shell: bash
+      run: |
+        frontend=false
+        backend=false
+        reinit=false
+
+        if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]
+        then
+          reinit=true
+        else
+          git diff --name-only \
+            "${{ github.event.before }}" \
+            "${{ github.sha }}" \
+            > changed.txt
+
+          if grep -q '^frontend/' changed.txt; then
+            frontend=true
+          fi
+
+          if grep -q '^backend/' changed.txt; then
+            backend=true
+          fi
+        fi
+
+        if git log -1 --pretty=%B | grep -qi '\[frontend\]'; then
+          frontend=true
+        fi
+
+        if git log -1 --pretty=%B | grep -qi '\[backend\]'; then
+          backend=true
+        fi
+
+        if git log -1 --pretty=%B | grep -qi '\[reinit\]'; then
+          reinit=true
+        fi
+
+        echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+        echo "backend=$backend" >> "$GITHUB_OUTPUT"
+        echo "reinit=$reinit" >> "$GITHUB_OUTPUT"
