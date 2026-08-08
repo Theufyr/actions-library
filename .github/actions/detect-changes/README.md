@@ -3,9 +3,10 @@
 
 ---
 # Overview
-This action notifies your workflow of any changes in `frontend` or `backend` folders since the last commit on the distant branch (the last push/merge/etc.). The workflow will know what to update and will avoid useless *build* or *FTP* operations.
+This action notifies your workflow of any changes in `frontend` or `backend` directories since the last commit on the distant branch (the last push/merge/etc.). The workflow will know what to update and will avoid useless *build* or *FTP* operations.
 
 You can also use some tags with this action, in your commit's comment, to notify the workflow to force updates even if no change has been detected. The action returns `true`/`false` for `frontend`, `backend` and `reinit`. You can use these variables to trigger other steps than updates in your workfkow (tests for exemple).
+
 #### How-to
 - [Add the action to your workflow](#add-the-action-to-your-workflow)
 - use the returned variables in your workflow to trigger updates, tests, etc.<br>
@@ -13,8 +14,11 @@ You can also use some tags with this action, in your commit's comment, to notify
     - `${{ steps.changes.outputs.frontend }}`
     - `${{ steps.changes.outputs.backend }}`
     - `${{ steps.changes.outputs.reinit }}`
+- [Example of variables usage](#example-of-variables-usage)
+- [Examples of tags usage](#examples-of-tags-usage)
 
-#### Example of using these variables
+---
+#### Example of variables usage
 ```yml
 # .github/workflows/your-worflow.yml
       - name: Install frontend dependencies
@@ -31,7 +35,8 @@ You can also use some tags with this action, in your commit's comment, to notify
         run: npm run build
 ```
 
-#### Exemples of tags usage
+---
+#### Examples of tags usage
 You can use these commands in the terminal :
 ```bash
 # tags can be anywhere in the commit's comment
@@ -47,6 +52,7 @@ git commit --allow-empty -m "Trigger redeploy [reinit]"
 git push
 ```
 
+---
 # Add the action to your workflow
 Paste this code block in a job before the steps that need the variables :
 ```yml
@@ -91,8 +97,11 @@ L'action retourne au worklow des valeurs `true`/`false` pour `frontend`, `backen
     - `${{ steps.changes.outputs.frontend }}`
     - `${{ steps.changes.outputs.backend }}`
     - `${{ steps.changes.outputs.reinit }}`
+- [Exemple d'utilisation des variables](#exemple-dutilisation-des-variables)
+- [Exemples d'utilisation des tags](#exemples-dutilisation-des-tags)
 
-#### Exemple d'utilisation de ces variables
+---
+#### Exemple d'utilisation des variables
 ```yml
 # .github/workflows/votre-worflow.yml
       - name: Install frontend dependencies
@@ -109,6 +118,7 @@ L'action retourne au worklow des valeurs `true`/`false` pour `frontend`, `backen
         run: npm run build
 ```
 
+---
 #### Exemples d'utilisation des tags
 Dans le terminal utiliser ces commandes :
 ```bash
@@ -125,6 +135,7 @@ git commit --allow-empty -m "Trigger redeploy [reinit]"
 git push
 ```
 
+---
 # Ajouter l'action à votre workflow
 Copier/Coller ce bloc de code dans le  _job_ avant les _steps_ qui ont besoin des variables :
 ```yml

@@ -1,0 +1,65 @@
+name: Delete remote
+description: Empty (with option to delete as well) a space-separated list of one or more directories with SFTP without the need of a server shell
+
+inputs:
+  host:
+    description: SSH connection infos user@server
+    # example : ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}
+    required: true
+  key:
+    description: path to the public SSH key on server
+    # example : ~/.ssh/deploy_key
+    required: true
+  dirs:
+    description: full remote paths of the directories to empty, separated by spaces
+    # example for the app directory : "${{ secrets.DEPLOY_PATH }}"
+    # for a list of specific subdirectories, example with api/ and public/ : "${{ secrets.DEPLOY_PATH }}/api ${{ secrets.DEPLOY_PATH }}/public"
+    required: true
+  keep_root:
+    # optional value
+    description: 'true (default): empties the directories without deleting them. false: deletes the directories as well.'
+    required: false
+    default: 'true'
+  lang:
+    # optional value for logs comments language
+    description: 'en (default): english. fr: french.'
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Run delete_remote.sh for each dirs paths
+      shell: bash
+      run: |
+        chmod +x "${{ github.action_path }}/delete_remote.sh"
+        message_notice_delete="Directory emptied and deleted."
+        message_notice_keep="Directory contents emptied."
+        message_error_delete="Failed to delete directory."
+        message_error_keep="Failed to empty directory contents."
+        if [[ "${{ inputs.lang }}" == "fr" ]]; then
+          message_notice_delete="Dossier vidé et effacé."
+          message_notice_keep="Contenu du dossier vidé."
+          message_error_delete="Échec lors de la suppression du dossier."
+          message_error_keep="Échec pour vider le dossier."
+        fi
+        for path in ${{ inputs.dirs }}; do
+          message_notice="::notice::'$path' : $message_notice_delete"
+          message_error="::error::'$path' : $message_error_delete"
+          if [[ "${{ inputs.keep_root }}" == "true" ]]; then
+            message_notice="::notice::'$path' : $message_notice_keep"
+            message_error="::error::'$path' : $message_error_keep"
+          fi
+          if "${{ github.action_path }}/delete_remote.sh" \
+            "${{ inputs.host }}" \
+            "${{ inputs.key }}" \
+            "$path" \
+            "${{ inputs.keep_root }}" \
+            "${{ inputs.lang }}"
+          then
+            echo "$message_notice"
+          else
+            echo "$message_error"
+            exit 1
+          fi
+        done
