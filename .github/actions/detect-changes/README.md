@@ -8,6 +8,7 @@ This action notifies your workflow of any changes in `frontend` or `backend` dir
 You can also use some tags with this action, in your commit's comment, to notify the workflow to force updates even if no change has been detected. The action returns `true`/`false` for `frontend`, `backend` and `reinit`. You can use these variables to trigger other steps than updates in your workfkow (tests for exemple).
 
 #### How-to
+- [Add `fetch-depth` to the clone of your repository](#add-fetch-depth-to-the-clone-of-your-repository)
 - [Add the action to your workflow](#add-the-action-to-your-workflow)
 - use the returned variables in your workflow to trigger updates, tests, etc.<br>
     list of received variables with a `true` or `false` value if your workflow step ID is `changes` (name of your choice) :
@@ -16,6 +17,19 @@ You can also use some tags with this action, in your commit's comment, to notify
     - `${{ steps.changes.outputs.reinit }}`
 - [Example of variables usage](#example-of-variables-usage)
 - [Examples of tags usage](#examples-of-tags-usage)
+
+---
+#### Add `fetch-depth` to the clone of your repository
+This action will perform a `git diff` to check changes and has to check several previous commits if needed to find the last one on the distant branch (when the last push or pull resquest was made).<br>
+In your workflow's first *step*, where your repository is cloned, add the property `fetch-depth` with a value of more than the last commit.<br>
+In this example, 11 last commits are checked :
+```yml
+# .github/workflows/your-worflow.yml
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 11
+```
 
 ---
 #### Example of variables usage
@@ -91,6 +105,7 @@ Elle permet aussi avec un simple tag ajouté dans le commentaire d'un commit, de
 L'action retourne au worklow des valeurs `true`/`false` pour `frontend`, `backend` et `reinit`, qui peuvent être utilisées pour déclencher autre chose que des mises à jour dans le worflow (des tests par exemple).
 
 ### Marche à suivre
+- [Ajouter `fetch-depth` au clone du dépôt](#ajouter-fetch-depth-au-clone-du-dépôt)
 - [Ajouter l'action à votre workflow](#ajouter-laction-à-votre-workflow)
 - utiliser les variables renvoyées au workflow pour déclencher des mises à jour, tests, etc.<br>
     liste des variables obtenues (retournant une valeur `true` ou `false`) si `changes` est l'ID du step de votre workflow (nom au choix) :
@@ -99,6 +114,20 @@ L'action retourne au worklow des valeurs `true`/`false` pour `frontend`, `backen
     - `${{ steps.changes.outputs.reinit }}`
 - [Exemple d'utilisation des variables](#exemple-dutilisation-des-variables)
 - [Exemples d'utilisation des tags](#exemples-dutilisation-des-tags)
+
+---
+#### Ajouter `fetch-depth` au clone du dépôt
+Cette action va faire un `git diff` pour vérifier ce qui a changé et doit pouvoir vérifier plusieurs commits en amont jusqu'à tomber sur celui qui correspond au dernier push ou pull request de la branche distante.
+Pour cela, dans le premier *step* de votre workflow, celui qui clone votre dépôt, ajouter la propriété `fetch-depth` avec un nombre suffisant de commits vérifiés, pas seulement le dernier.
+Dans l'exemple, 11 commits récupérés :
+```yml
+# .github/workflows/votre-worflow.yml
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 11
+```
+
 
 ---
 #### Exemple d'utilisation des variables
