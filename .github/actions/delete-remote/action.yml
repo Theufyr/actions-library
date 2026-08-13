@@ -31,31 +31,38 @@ runs:
   steps:
     - name: Run delete_remote.sh for each dirs paths
       shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        MESSAGE_LANG: ${{ inputs.lang }}
+        DIRS: ${{ inputs.dirs }}
+        KEEP_ROOT: ${{ inputs.keep_root }}
+        HOST: ${{ inputs.host }}
+        KEY: ${{ inputs.key }}
       run: |
-        chmod +x "${{ github.action_path }}/delete_remote.sh"
+        chmod +x "$ACTION_PATH/delete_remote.sh"
         message_notice_delete="Directory emptied and deleted."
         message_notice_keep="Directory contents emptied."
         message_error_delete="Failed to delete directory."
         message_error_keep="Failed to empty directory contents."
-        if [[ "${{ inputs.lang }}" == "fr" ]]; then
+        if [[ "$MESSAGE_LANG" == "fr" ]]; then
           message_notice_delete="Dossier vidé et effacé."
           message_notice_keep="Contenu du dossier vidé."
           message_error_delete="Échec lors de la suppression du dossier."
           message_error_keep="Échec pour vider le dossier."
         fi
-        for path in ${{ inputs.dirs }}; do
+        for path in $DIRS; do
           message_notice="::notice::'$path' : $message_notice_delete"
           message_error="::error::'$path' : $message_error_delete"
-          if [[ "${{ inputs.keep_root }}" == "true" ]]; then
+          if [[ "$KEEP_ROOT" == "true" ]]; then
             message_notice="::notice::'$path' : $message_notice_keep"
             message_error="::error::'$path' : $message_error_keep"
           fi
-          if "${{ github.action_path }}/delete_remote.sh" \
-            "${{ inputs.host }}" \
-            "${{ inputs.key }}" \
+          if "$ACTION_PATH/delete_remote.sh" \
+            "$HOST" \
+            "$KEY" \
             "$path" \
-            "${{ inputs.keep_root }}" \
-            "${{ inputs.lang }}"
+            "$KEEP_ROOT" \
+            "$MESSAGE_LANG"
           then
             echo "$message_notice"
           else

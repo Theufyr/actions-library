@@ -22,7 +22,9 @@ This action sends you a _Telegram_ notification at the end of a _GitHub Actions_
         "workflow: { nom du workflow }<br>
         { success or failure } on { GitHub repository }<br>
         { date & time UTC }<br>
-        { action type } from { source branch } to { target branch }"
+        action: { type }<br>
+        to { target branch }<br>
+        from { source branch }"
 
 ---
 ### Detect changes from last push
@@ -91,7 +93,9 @@ Cette action envoie une notification _Telegram_ à la fin d'un workflow _GitHub 
         "workflow: { nom du workflow }<br>
         { succès ou échec } on { dépôt GitHub }<br>
         { date & heure UTC }<br>
-        { type d'action } from { branche source } to { branche ciblée }"
+        action: { type d'action }<br>
+        to { branche ciblée }<br>
+        from { branche source }"
 
 ---
 ### Detection des changements depuis le dernier push

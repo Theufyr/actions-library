@@ -27,6 +27,9 @@ For *SFTP* connections with *SSH* authentification and find folders path, you'll
   - `SSH_USER` : your *FTP* login on the server, ex : `SSH_USER=MyAccount`
   - `SSH_SERVER` : the *FTP* server host, ex : `SSH_SERVER=ftp.mysite.com`
   - `DEPLOY_PATH` : the absolute path where the app lives on the server, ex : `DEPLOY_PATH=/home/mysite/www/myapp`
+To check the server and avoid *MITM* attacks, you'll also need :
+  - `SSH_PRIVATE_KEY` : private SSH key (the public one must be on the server in `.ssh/authorized_keys`)
+  - `SSH_KNOWN_HOSTS` : result of `ssh-keyscan` with the server
 
 ---
 #### OPTIONAL : Prepare directories list
@@ -74,6 +77,17 @@ Example :
 Paste this code block in a _job_ after the steps listing the directories to empty/delete :
 ```yml
 # .github/workflows/your-worflow.yml
+      # step to prepare server check and avoid MITM attacks
+      - name: Configure SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+      
       - name: Delete folders
         # DIRS_TO_DELETE is a workflow variable defined earlier
         # to store the absolute paths of all directories to empty/delete
@@ -131,6 +145,7 @@ jobs:
     runs-on: ubuntu-latest
 ```
 - [Préparer les variables d'environnement](#préparer-les-variables-denvironnement)
+- [Préparer la clef SSH](#préparer-la-clef-ssh)
 - [FACULTATIF : Préparer la liste des dossiers à effacer](#facultatif--préparer-la-liste-des-dossiers-à-effacer)
 - [Ajouter l'action à votre workflow](#ajouter-laction-à-votre-workflow)
 
@@ -143,6 +158,10 @@ Pour l'authentification *SSH* au serveur et trouver les chemins des dossiers, il
   - `SSH_USER` : votre identifiant *FTP* sur le serveur, ex : `SSH_USER=MonCompte`
   - `SSH_SERVER` : le host *FTP* du serveur, ex : `SSH_SERVER=ftp.monsite.com`
   - `DEPLOY_PATH` : le chemin absolu où se trouve l'app sur le serveur, ex : `DEPLOY_PATH=/home/monsite/www/monapp`
+Pour verifier que GitHub se connecte bien au vrai serveur et éviter les attaques *MITM*, il faudra :
+  - `SSH_PRIVATE_KEY` : clé SSH privée  (la clé publique doit être stockée sur le serveyr dans `.ssh/authorized_keys`)
+  - `SSH_KNOWN_HOSTS` : résultat d'un `ssh-keyscan` sur le serveur
+
 
 ---
 #### FACULTATIF : Préparer la liste des dossiers à effacer
@@ -190,6 +209,17 @@ Exemple :
 Copier/Coller ce bloc de code dans le  _job_ après avoir défini la liste des dossiers à vider/effacer :
 ```yml
 # .github/workflows/votre-worflow.yml
+      # step qui prépare la vérification du serveur pour éviter les attaques MITM
+      - name: Configure SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+      
       - name: Delete folders
         # DIRS_TO_DELETE est une variable créée au préalable dans le workflow
         # pour lister les chemins absolus de chaque dossier à vider/effacer

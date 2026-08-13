@@ -17,25 +17,35 @@ runs:
   steps:
     - name: Send Telegram message
       shell: bash
+      env:
+        STATUS: ${{ inputs.status }}
+        REF_NAME: ${{ github.ref_name }}
+        HEAD_REF: ${{ github.head_ref }}
+        BASE_REF: ${{ github.base_ref }}
+        WORKFLOW: ${{ github.workflow }}
+        REPOSITORY: ${{ github.repository }}
+        EVENT_NAME: ${{ github.event_name }}
+        BOT_TOKEN: ${{ inputs.bot_token }}
+        CHAT_ID: ${{ inputs.chat_id }}
       run: |
-        if [[ "${{ inputs.status }}" == "success" ]]; then
+        if [[ "$STATUS" == "success" ]]; then
           emoji="✅"
         else
           emoji="❌"
         fi
 
         branches_action=""
-        if [[ "${{ github.head_ref }}" == "" ]]; then
-          branches_action="on `${{ github.ref_name }}`"
+        if [[ "$HEAD_REF" == "" ]]; then
+          branches_action="to \`$REF_NAME\`"
         else
-          branches_action="from `${{ github.head_ref }}` to `${{ github.base_ref }}`"
+          branches_action="to \`$BASE_REF\`%0Afrom \`$HEAD_REF\`"
         fi
 
         timestamp="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-        message="${emoji} *workflow:* `${{ github.workflow }}`%0A*${{ inputs.status }}* on ${{ github.repository }}%0A${timestamp}%0A`${{ github.event_name }}` ${branches_action}"
+        message="${emoji} *workflow:* \`$WORKFLOW\`%0A*$STATUS* on $REPOSITORY%0A${timestamp}%0A*action:* \`$EVENT_NAME\`%0A${branches_action}"
 
         curl -s -X POST \
-          "https://api.telegram.org/bot${{ inputs.bot_token }}/sendMessage" \
-          -d "chat_id=${{ inputs.chat_id }}" \
+          "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+          -d "chat_id=$CHAT_ID" \
           -d "text=${message}" \
           -d "parse_mode=Markdown"

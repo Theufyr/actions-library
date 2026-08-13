@@ -88,12 +88,16 @@ Paste this code block as the last step of a job you need to check :
 # .github/workflows/your-worflow.yml
       - name: Notify Telegram
         if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          JOB_STATUS: ${{ job.status }}
         # If you need another version, replace `latest` for another version, ex: `v1`
         uses: Theufyr/actions-library/.github/actions/telegram-notify@telegram-notify/latest
         with:
-          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          status: ${{ job.status }}
+          bot_token: $TELEGRAM_BOT_TOKEN
+          chat_id: $TELEGRAM_CHAT_ID
+          status: $JOB_STATUS
 ```
 <br>
 <br>
@@ -192,11 +196,15 @@ Copier/Coller ce bloc de code en tant que dernier _step_ du _job_ que vous voule
 # .github/workflows/votre-worflow.yml
       - name: Notify Telegram
         if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          JOB_STATUS: ${{ job.status }}
         # Si vous avez besoin d'une autre version que la plus récente
         # remplacer `latest` par la version désirée, ex: `v1`
         uses: Theufyr/actions-library/.github/actions/telegram-notify@telegram-notify/latest
         with:
-          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          status: ${{ job.status }}
+          bot_token: $TELEGRAM_BOT_TOKEN
+          chat_id: $TELEGRAM_CHAT_ID
+          status: $JOB_STATUS
 ```

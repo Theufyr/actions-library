@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
-HOST="$1"
-KEY="$2"
-ROOT="$3"
+set -x
+HOST="${1:?Missing required argument: HOST}"
+KEY="${2:?Missing required argument: KEY}"
+ROOT="${3:?Missing required argument: ROOT}"
 KEEP_ROOT="${4:-true}"
-LANG="${5:-en}"
+MESSAGE_LANG="${5:-en}"
 log_invalid="Invalid ROOT"
 log_not_found="not found on server, operation aborted."
 log_sftp_error_check="SFTP error while checking"
 log_sftp_error_dir="SFTP error with directory"
 log_keep="directory contents emptied (directory kept)."
 log_delete="directory emptied and deleted."
-if [[ $ROOT == "fr" ]]; then
+if [[ $MESSAGE_LANG == "fr" ]]; then
   log_invalid="Dossier racine invalide"
   log_not_found="introuvable côté serveur, opération annulée."
   log_sftp_error_check="Erreur SFTP lors de la vérification de"
@@ -27,11 +28,18 @@ parent_dir="$(dirname "$ROOT")"
 root_name="$(basename "$ROOT")"
 parent_out="$(mktemp)"
 parent_err="$(mktemp)"
-sftp -i "$KEY" "$HOST" >"$parent_out" 2>"$parent_err" <<EOF
+rc=0
+sftp -i "$KEY" "$HOST" >"$parent_out" 2>"$parent_err" <<EOF || rc=$?
 cd "$parent_dir"
 ls -la
 bye
 EOF
+if (( rc != 0 )); then
+  echo "$log_sftp_error_check '$parent_dir' (code $rc):" >&2
+  cat "$parent_err" >&2
+  rm -f "$parent_out" "$parent_err"
+  exit 1
+fi
 root_found=false
 while IFS= read -r line; do
   case "$line" in

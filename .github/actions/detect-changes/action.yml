@@ -14,18 +14,21 @@ runs:
   steps:
     - id: verif_changes
       shell: bash
+      env:
+        EVENT_BEFORE: ${{ github.event.before }}
+        SHA: ${{ github.sha }}
       run: |
         frontend=false
         backend=false
         reinit=false
 
-        if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]
+        if [ "$EVENT_BEFORE" = "0000000000000000000000000000000000000000" ]
         then
           reinit=true
         else
           git diff --name-only \
-            "${{ github.event.before }}" \
-            "${{ github.sha }}" \
+            "$EVENT_BEFORE" \
+            "$SHA" \
             > changed.txt
 
           if grep -q '^frontend/' changed.txt; then
