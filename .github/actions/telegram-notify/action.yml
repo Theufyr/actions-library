@@ -32,7 +32,7 @@ runs:
         fi
 
         timestamp="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-        message="${emoji} *workflow:* `${{ github.workflow }}`%0A*${{ inputs.status }}* on ${{ github.repository }}%0A${timestamp}%0A`${{ github.event_name }}` {branches_action}"
+        message="${emoji} *workflow:* `${{ github.workflow }}`%0A*${{ inputs.status }}* on ${{ github.repository }}%0A${timestamp}%0A`${{ github.event_name }}` ${branches_action}"
 
         curl -s -X POST \
           "https://api.telegram.org/bot${{ inputs.bot_token }}/sendMessage" \
