@@ -24,7 +24,7 @@ inputs:
     # optional value for logs comments language
     description: 'en (default): english. fr: french.'
     required: false
-    default: 'true'
+    default: 'en'
 
 runs:
   using: composite
